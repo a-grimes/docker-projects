@@ -1,6 +1,8 @@
-# mediarr notes
+# README
 
-## homarr/homepage
+## ideas
+
+### homarr / homepage
 
 - container and service monitoring?
   - move to separate container
