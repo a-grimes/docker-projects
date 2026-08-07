@@ -1,0 +1,184 @@
+services:
+  # -----
+  # gluetun VPN
+  # -----
+
+  gluetun:
+    image: qmcgaw/gluetun:latest
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8090:8090 # qbittorrent webUI
+      - 9696:9696 # prowlarr webUI
+    environment:
+      - VPN_SERVICE_PROVIDER=${VPN_SERVICE_PROVIDER}
+      - VPN_TYPE=${VPN_TYPE}
+      - OPENVPN_USER=${OPENVPN_USER}
+      - OPENVPN_PASSWORD=${OPENVPN_PASSWORD}
+      - SERVER_CITIES=${SERVER_CITIES}
+      - TZ=${TZ}
+      - FIREWALL=on # VPN kill switch
+      - FIREWALL_INPUT_PORTS=8090,9696
+      - VPN_PORT_FORWARDING=on
+      - PORT_FORWARD_ONLY=on
+      - VPN_PORT_FORWARDING_UP_COMMAND=/bin/sh -c 'wget -O- -nv --retry-connrefused --post-data "json={\"listen_port\":{{PORT}},\"current_network_interface\":\"{{VPN_INTERFACE}}\",\"random_port\":false,\"upnp\":false}" http://server.local:8090/api/v2/app/setPreferences'
+      - VPN_PORT_FORWARDING_DOWN_COMMAND=/bin/sh -c 'wget -O- -nv --retry-connrefused --post-data "json={\"listen_port\":0,\"current_network_interface\":\"lo\"}" http://server.local:8090/api/v2/app/setPreferences'
+    volumes:
+      - /volume1/docker/gluetun:/gluetun
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "https://ipinfo.io"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    
+  # -----
+  # qbittorrent
+  # -----
+
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: service:gluetun
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+      - WEBUI_PORT=8090
+    volumes:
+      - /volume1/docker/qbittorrent:/config
+      - /volume1/data:/data
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # -----
+  # byparr
+  # -----
+
+  byparr:
+    image: ghcr.io/thephaseless/byparr:latest
+    container_name: byparr
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - 8191:8191
+    environment:
+      - LOG_LEVEL=info
+      - LOG_HTML=false
+      - CAPTCHA_SOLVER=none
+      - TZ=${TZ}
+    restart: unless-stopped
+
+  # -----
+  # prowlarr
+  # -----
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    network_mode: service:gluetun
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /volume1/docker/prowlarr:/config
+    depends_on:
+      gluetun:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # -----
+  # radarr
+  # -----
+    
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    ports:
+      - 7878:7878
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /volume1/docker/radarr:/config
+      - /volume1/data:/data
+    restart: unless-stopped
+
+  # -----
+  # sonarr
+  # -----
+  
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    ports:
+      - 8989:8989
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /volume1/docker/sonarr:/config
+      - /volume1/data:/data
+    restart: unless-stopped
+
+  # -----
+  # bazaarr
+  # -----
+  
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    ports:
+      - 6767:6767
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /volume1/docker/bazarr:/config
+      - /volume1/data/:/data
+    depends_on:
+      - radarr
+      - sonarr
+    restart: unless-stopped
+
+  # -----
+  # seerr
+  # -----
+  
+  seerr:
+    image: ghcr.io/hotio/seerr
+    container_name: seerr
+    ports:
+      - 5055:5055
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ}
+    volumes:
+      - /volume1/docker/seerr:/config
+    depends_on:
+      - radarr
+      - sonarr
+    restart: unless-stopped
