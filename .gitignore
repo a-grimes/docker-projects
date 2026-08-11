@@ -1,2 +1,17 @@
+# Docker application data
+mediarr/config/
+
+# Environment/secrets
 .env
-.env.local
+.env.*
+!.env.example
+
+# Docker overrides
+docker-compose.override.yml
+compose.override.yaml
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
