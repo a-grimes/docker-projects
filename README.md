@@ -14,6 +14,10 @@
 
 ## ideas/projects/containers
 
+### new `audiobookshelf` container
+
+- add to `mediarr`?
+
 ### new `nginx` reverse proxy project
 
 - new proxy network needed
