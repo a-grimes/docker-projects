@@ -14,6 +14,13 @@
 
 ## ideas/projects/containers
 
+### new `scrypted` project
+
+- video camera integrarion
+- full, historic recording
+- facial recognition?
+- stream to Google Home
+
 ### new `audiobookshelf` container
 
 - add to `mediarr`?
