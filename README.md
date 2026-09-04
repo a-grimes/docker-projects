@@ -8,7 +8,7 @@
 |qbittorrent|`lscr.io/linuxserver/qbittorrent`|5.2.3|08/10/2026 17:26:06|
 |bypar|`ghcr.io/thephaseless/bypar`|*latest*|08/11/2026 06:06:11|
 |prowlarr|`lscr.io/linuxserver/prowlarr`|2.5.2.5491|08/05/2026 02:14:51|
-|readarr|`lscr.io/linuxserver/radarr`|6.3.0.10514|08/02/2026 13:51:32|
+|radarr|`lscr.io/linuxserver/radarr`|6.3.0.10514|08/02/2026 13:51:32|
 |sonarr|`lscr.io/linuxserver/sonarr`|4.0.19.2979|08/07/2026 19:57:23|
 |recyclarr|`ghcr.io/recyclarr/recyclarr`|8|08/06/2026 22:14:00|
 |bazarr|`lscr.io/linuxserver/bazarr`|1.6.0|08/11/2026 18:11:11|
