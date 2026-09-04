@@ -4,7 +4,7 @@ services:
   # -----
 
   gluetun:
-    image: qmcgaw/gluetun:latest
+    image: qmcgaw/gluetun:3.41.3
     container_name: gluetun
     cap_add:
       - NET_ADMIN
@@ -41,7 +41,7 @@ services:
   # -----
 
   qbittorrent:
-    image: lscr.io/linuxserver/qbittorrent:latest
+    image: lscr.io/linuxserver/qbittorrent:5.2.3
     container_name: qbittorrent
     network_mode: service:gluetun
     security_opt:
@@ -82,7 +82,7 @@ services:
   # -----
 
   prowlarr:
-    image: lscr.io/linuxserver/prowlarr:latest
+    image: lscr.io/linuxserver/prowlarr:2.5.2.5491
     container_name: prowlarr
     network_mode: service:gluetun
     security_opt:
@@ -103,7 +103,7 @@ services:
   # -----
     
   radarr:
-    image: lscr.io/linuxserver/radarr:latest
+    image: lscr.io/linuxserver/radarr:6.3.0.10514
     container_name: radarr
     ports:
       - 7878:7878
@@ -123,7 +123,7 @@ services:
   # -----
   
   sonarr:
-    image: lscr.io/linuxserver/sonarr:latest
+    image: lscr.io/linuxserver/sonarr:4.0.19.2979
     container_name: sonarr
     ports:
       - 8989:8989
@@ -158,7 +158,7 @@ services:
   # -----
   
   bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
+    image: lscr.io/linuxserver/bazarr:1.6.0
     container_name: bazarr
     ports:
       - 6767:6767
@@ -181,7 +181,7 @@ services:
   # -----
   
   seerr:
-    image: ghcr.io/hotio/seerr
+    image: ghcr.io/hotio/seerr:3.4.1
     container_name: seerr
     ports:
       - 5055:5055
